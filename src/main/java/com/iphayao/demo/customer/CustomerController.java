@@ -5,28 +5,18 @@ import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
-import java.util.Optional;
-
-import static org.springframework.http.ResponseEntity.notFound;
-
 @RestController
 @RequestMapping("/customers")
 public class CustomerController {
-    private CustomerService customerService;
+    private final CustomerService customerService;
 
     public CustomerController(CustomerService customerService) {
         this.customerService = customerService;
     }
 
     @GetMapping
-    public Flux<Customer> getCustomers(@RequestParam(name = "last_name", required = false) Optional<String> lastName) {
-        Flux<Customer> customers;
-        if(lastName.isPresent()) {
-            customers = customerService.findCustomerByLastName(lastName.get());
-        } else {
-            customers = customerService.getAllCustomer();
-        }
-        return customers;
+    public Flux<Customer> getCustomers(@RequestParam(name = "last_name", required = false) String lastName) {
+        return customerService.findCustomerByLastName(lastName);
     }
 
     @GetMapping("/{id}")
@@ -52,4 +42,5 @@ public class CustomerController {
     public Mono<Void> deleteCustomer(@PathVariable long id) {
         return customerService.deleteCustomerById(id);
     }
+
 }

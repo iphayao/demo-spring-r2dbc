@@ -6,14 +6,10 @@ import reactor.core.publisher.Mono;
 
 @Service
 public class CustomerService {
-    private CustomerRepository customerRepository;
+    private final CustomerRepository customerRepository;
 
     public CustomerService(CustomerRepository customerRepository) {
         this.customerRepository = customerRepository;
-    }
-
-    public Flux<Customer> getAllCustomer() {
-        return customerRepository.findAll();
     }
 
     public Mono<Customer> findCustomerById(Long id) {
@@ -21,11 +17,15 @@ public class CustomerService {
     }
 
     public Flux<Customer> findCustomerByLastName(String lastName) {
-        return customerRepository.findByLastName(lastName);
+        if(lastName == null) {
+            return customerRepository.findAll();
+        } else {
+            return customerRepository.findByLastName(lastName);
+        }
     }
 
     public Mono<Customer> createNewCustomer(Mono<Customer> customer) {
-        return customer.flatMap(c -> customerRepository.save(c));
+        return customer.flatMap(customerRepository::save);
     }
 
     public Mono<Customer> editCustomerById(long id, Mono<Customer> customer) {
@@ -41,4 +41,5 @@ public class CustomerService {
     public Mono<Void> deleteCustomerById(long id) {
         return customerRepository.deleteById(id);
     }
+
 }
