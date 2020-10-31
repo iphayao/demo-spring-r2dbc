@@ -27,12 +27,12 @@ public class CustomerController {
     }
 
     @PostMapping
-    public Mono<Customer> postCustomer(@RequestBody Mono<Customer> customer) {
+    public Mono<Customer> postCustomer(@RequestBody Customer customer) {
         return customerService.createNewCustomer(customer);
     }
 
     @PutMapping("/{id}")
-    public Mono<ResponseEntity<Customer>> putCustomer(@PathVariable long id, @RequestBody Mono<Customer> customer) {
+    public Mono<ResponseEntity<Customer>> putCustomer(@PathVariable long id, @RequestBody Customer customer) {
         return customerService.editCustomerById(id, customer)
                 .map(ResponseEntity::ok)
                 .defaultIfEmpty(ResponseEntity.notFound().build());

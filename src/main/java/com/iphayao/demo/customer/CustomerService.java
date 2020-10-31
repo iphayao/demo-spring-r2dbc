@@ -17,25 +17,24 @@ public class CustomerService {
     }
 
     public Flux<Customer> findCustomerByLastName(String lastName) {
-        if(lastName == null) {
+        if (lastName == null) {
             return customerRepository.findAll();
         } else {
             return customerRepository.findByLastName(lastName);
         }
     }
 
-    public Mono<Customer> createNewCustomer(Mono<Customer> customer) {
-        return customer.flatMap(customerRepository::save);
+    public Mono<Customer> createNewCustomer(Customer customer) {
+        return customerRepository.save(customer);
     }
 
-    public Mono<Customer> editCustomerById(long id, Mono<Customer> customer) {
-        return customer.flatMap(c ->
-                customerRepository.findById(id)
-                        .flatMap(e -> {
-                            c.setId(e.getId());
-                            return customerRepository.save(c);
-                        })
-        );
+    public Mono<Customer> editCustomerById(long id, Customer customer) {
+        return customerRepository.findById(id)
+                .flatMap(e -> {
+                    customer.setId(e.getId());
+                    return customerRepository.save(customer);
+                });
+
     }
 
     public Mono<Void> deleteCustomerById(long id) {
